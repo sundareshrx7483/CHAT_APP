@@ -39,3 +39,24 @@ export const validateRegisterInput = withValidationErrors([
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters"),
 ]);
+
+export const validateLoginInput = withValidationErrors([
+  body().custom((value, { req }) => {
+    if (!req.body.userName && !req.body.email) {
+      throw new BadRequestError("Either email or username is required");
+    }
+    return true;
+  }),
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .custom(async (password, { req }) => {
+      const { userName, email } = req.body;
+      const user = await User.findOne({
+        $or: [userName ? { userName } : {}, email ? { email } : {}],
+      });
+      if (!user) {
+        throw new BadRequestError(`Invalid credentials`);
+      }
+    }),
+]);
