@@ -1,6 +1,6 @@
 import { body, validationResult } from "express-validator";
 import { BadRequestError } from "../errors/customErrors.js";
-import User from "../model/user.js";
+import User from "../model/User.js";
 
 const withValidationErrors = (validateValues) => {
   return [

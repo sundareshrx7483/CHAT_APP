@@ -1,4 +1,4 @@
-import User from "../model/user.js";
+import User from "../model/User.js";
 import { StatusCodes } from "http-status-codes";
 
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -20,7 +20,6 @@ export const register = asyncHandler(async (req, res) => {
     .status(StatusCodes.CREATED)
     .json({ msg: "User created successfully", user });
 });
-
 
 export const login = asyncHandler(async (req, res) => {
   res.status(200).send("login");
