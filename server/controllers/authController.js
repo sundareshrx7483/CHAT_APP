@@ -2,7 +2,8 @@ import User from "../model/User.js";
 import { StatusCodes } from "http-status-codes";
 
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { hashPassword } from "../utils/passwordUtils.js";
+import { comparePassword, hashPassword } from "../utils/passwordUtils.js";
+import { UnauthenticatedError } from "../errors/customErrors.js";
 
 export const register = asyncHandler(async (req, res) => {
   const { userName, password, email } = req.body;
@@ -13,7 +14,6 @@ export const register = asyncHandler(async (req, res) => {
     userName,
     password: req.body.password,
     email,
-    role: req.body.role,
   });
 
   res
@@ -22,5 +22,12 @@ export const register = asyncHandler(async (req, res) => {
 });
 
 export const login = asyncHandler(async (req, res) => {
-  res.status(200).send("login");
+  const { userName, email, password } = req.body;
+  const user = await User.findOne({ $or: [{ userName }, { email }] });
+
+  const isValidPassword = await comparePassword(password, user.password);
+  if (!isValidPassword) {
+    throw new UnauthenticatedError("Wrong Password!");
+  }
+  res.status(StatusCodes.OK).json({ msg: "Login successfull" });
 });

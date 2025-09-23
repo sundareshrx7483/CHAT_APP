@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import registerRoute from "./routes/registerRoute.js";
+import authRoute from "./routes/authRoute.js";
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use("/api/auth", registerRoute);
+app.use("/api/auth", authRoute);
 
 try {
   const dbConnection = await mongoose.connect(MONGO_URI);
