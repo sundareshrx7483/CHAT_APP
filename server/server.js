@@ -5,7 +5,6 @@ import cors from "cors";
 import mongoose from "mongoose";
 import authRoute from "./routes/authRoute.js";
 import cookieParser from "cookie-parser";
-
 import config from "./config/config.js";
 const { port, mongoUri, jwtSecret } = config;
 
