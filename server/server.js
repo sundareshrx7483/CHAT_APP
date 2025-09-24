@@ -1,26 +1,27 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoute from "./routes/authRoute.js";
+import cookieParser from "cookie-parser";
 
-dotenv.config();
+import config from "./config/config.js";
+const { port, mongoUri, jwtSecret } = config;
 
-const app = express();
+export const app = express();
 
-const port = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
+app.use("/api/auth", authRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use("/api/auth", authRoute);
-
 try {
-  const dbConnection = await mongoose.connect(MONGO_URI);
+  const dbConnection = await mongoose.connect(mongoUri);
   console.log("Connected to MongoDB");
   if (dbConnection) {
     app.listen(port, () => {
