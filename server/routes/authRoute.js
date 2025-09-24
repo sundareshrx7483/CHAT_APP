@@ -7,12 +7,8 @@ import {
 
 const router = Router();
 
-export const registerRoute = router.post(
-  "/register",
-  validateRegisterInput,
-  register
-);
+ router.post("/register", validateRegisterInput, register);
 
-export const loginRoute = router.post("/login", validateLoginInput, login);
+ router.post("/login", validateLoginInput, login);
 
 export default router;

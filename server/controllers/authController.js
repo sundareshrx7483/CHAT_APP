@@ -26,16 +26,34 @@ export const login = asyncHandler(async (req, res) => {
   const { userName, email, password } = req.body;
   const user = await User.findOne({ $or: [{ userName }, { email }] });
 
+  if (!user) {
+    throw new UnauthenticatedError("User not found!");
+  }
+
   const isValidPassword = await comparePassword(password, user.password);
   if (!isValidPassword) {
     throw new UnauthenticatedError("Wrong Password!");
   }
-  const token = generateToken(user);
+
+  user.onlineStatus = true;
+  await user.save();
+
+  const token = generateToken(user._id);
 
   res.cookie("token", token, {
     httpOnly: true,
     expires: new Date(Date.now() + 5 * 60 * 1000),
     secure: process.env.NODE_ENV === "production",
   });
-  res.status(StatusCodes.OK).json({ msg: "Login successfull" }, user);
+
+  const userInfo = {
+    _id: user._id,
+    userName: user.userName,
+    email: user.email,
+    onlineStatus: user.onlineStatus,
+  };
+
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Login Successfull!", token, user: userInfo });
 });
