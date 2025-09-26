@@ -7,7 +7,10 @@ export const getchats = asyncHandler(async (req, res) => {
   // Find all messages where senderId or receiverId is userId
   const messages = await Messages.find({
     $or: [{ senderId: userId }, { receiverId: userId }],
-  }).sort({ createdAt: -1 });
+  })
+    .sort({ createdAt: -1 })
+    .populate("senderId", "username email profilePic")
+    .populate("receiverId", "username email profilePic");
 
   // Use Map to group by chatWithUser and pick latest message
   const conversations = new Map();
