@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { comparePassword, hashPassword } from "../utils/passwordUtils.js";
 import { UnauthenticatedError } from "../errors/customErrors.js";
-import { generateToken } from "../utils/tokenUtils.js";
+import { generateToken, verifyToken } from "../utils/tokenUtils.js";
 
 export const register = asyncHandler(async (req, res) => {
   const { userName, password, email } = req.body;
@@ -56,4 +56,33 @@ export const login = asyncHandler(async (req, res) => {
   res
     .status(StatusCodes.OK)
     .json({ msg: "Login Successfull!", token, user: userInfo });
+});
+
+export const logout = asyncHandler(async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ message: "No token provided" });
+  }
+
+  let decoded;
+
+  decoded = await verifyToken(token);
+
+  const userId = decoded.user;
+  const user = await User.findById(userId);
+  if (user) {
+    user.onlineStatus = false;
+    await user.save();
+    console.log("online status:", user.onlineStatus);
+  }
+
+  res.cookie("token", "", {
+    httpOnly: true,
+    expires: new Date(0),
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  res.status(200).json({ message: "Logged out successfully" });
 });

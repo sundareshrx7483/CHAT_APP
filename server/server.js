@@ -7,6 +7,7 @@ import authRoute from "./routes/authRoute.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import cookieParser from "cookie-parser";
 import config from "./config/config.js";
+import morgan from "morgan";
 
 const { port, mongoUri, jwtSecret } = config;
 
@@ -15,6 +16,7 @@ export const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use(morgan("dev"));
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messageRoutes);
 app.get("/", (req, res) => {
