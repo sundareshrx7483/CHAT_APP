@@ -5,6 +5,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import authRoute from "./routes/authRoute.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import chatRoutes from "./routes/chatRoute.js";
 import cookieParser from "cookie-parser";
 import config from "./config/config.js";
 import morgan from "morgan";
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messageRoutes);
+app.use("/api/chats", chatRoutes);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });

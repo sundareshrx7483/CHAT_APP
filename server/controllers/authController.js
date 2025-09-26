@@ -5,6 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { comparePassword, hashPassword } from "../utils/passwordUtils.js";
 import { UnauthenticatedError } from "../errors/customErrors.js";
 import { generateToken, verifyToken } from "../utils/tokenUtils.js";
+import { addTokenToBlacklist } from "../utils/tokenBlacklist.js";
 
 export const register = asyncHandler(async (req, res) => {
   const { userName, password, email } = req.body;
@@ -67,8 +68,9 @@ export const logout = asyncHandler(async (req, res) => {
   }
 
   let decoded;
-
   decoded = await verifyToken(token);
+
+  addTokenToBlacklist(token);
 
   const userId = decoded.user;
   const user = await User.findById(userId);
